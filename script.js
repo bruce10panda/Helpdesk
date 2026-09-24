@@ -334,6 +334,122 @@ function renderWeekTable(now) {
   document.getElementById('scheduleBody').innerHTML = rows.join('');
 }
 
+// ---------- Melden: niemand aanwezig ----------
+
+function slotKey(dayKey, period) {
+  return `${dayKey}|${period}`;
+}
+
+// Maandag 00:00 van de week waarin `date` valt.
+function mondayOfWeek(date) {
+  const d = new Date(date);
+  const offset = d.getDay() === 0 ? -6 : 1 - d.getDay();
+  d.setDate(d.getDate() + offset);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+// Alle lesuren van deze week (t/m nu) waar wél iemand op het rooster staat.
+// Toekomstige lesuren kun je niet melden, want dan weet je nog niet of er iemand zit.
+function buildWeekSlots(now) {
+  const monday = mondayOfWeek(now);
+  const slots = [];
+  SCHOOL_DAYS.forEach((dayKey, dayIndex) => {
+    const dayDate = new Date(monday);
+    dayDate.setDate(dayDate.getDate() + dayIndex);
+    HOURS.forEach((hour) => {
+      const names = namesFor(dayKey, hour.period);
+      if (!names.length) return;
+      const start = atTime(dayDate, hour.start);
+      if (start > now) return;
+      slots.push({ dayKey, period: hour.period, start: hour.start, end: hour.end, names });
+    });
+  });
+  return slots;
+}
+
+// Het lesuur waar we nu middenin zitten, als daar iemand voor is ingeroosterd.
+function currentSlotKey(now) {
+  const todayKey = DAY_LABELS[now.getDay()];
+  if (!isSchoolDay(todayKey)) return null;
+  const hour = HOURS.find((h) => now >= atTime(now, h.start) && now < atTime(now, h.end));
+  if (!hour || !namesFor(todayKey, hour.period).length) return null;
+  return slotKey(todayKey, hour.period);
+}
+
+function renderReportSlots(now) {
+  const select = document.getElementById('reportSlot');
+  if (!select) return;
+  const slots = buildWeekSlots(now);
+  const activeKey = currentSlotKey(now);
+
+  if (!slots.length) {
+    select.innerHTML = '<option value="" disabled selected>Nog geen lesuren geweest deze week</option>';
+    return;
+  }
+
+  select.innerHTML = slots.map((s) => {
+    const key = slotKey(s.dayKey, s.period);
+    return `<option value="${key}">${capitalize(s.dayKey)} · ${s.period}e uur (${s.start}–${s.end}) — ${s.names.join(', ')}</option>`;
+  }).join('');
+
+  if (activeKey && slots.some((s) => slotKey(s.dayKey, s.period) === activeKey)) {
+    select.value = activeKey;
+  }
+}
+
+function resetReportForm() {
+  const form = document.getElementById('reportForm');
+  const status = document.getElementById('reportStatus');
+  if (!form) return;
+  form.reset();
+  renderReportSlots(new Date());
+  status.textContent = '';
+  status.removeAttribute('data-tone');
+}
+
+function initReportForm() {
+  const openBtn = document.getElementById('reportOpenBtn');
+  const cancelBtn = document.getElementById('reportCancelBtn');
+  const dialog = document.getElementById('reportDialog');
+  const form = document.getElementById('reportForm');
+  const status = document.getElementById('reportStatus');
+  if (!openBtn || !dialog || !form) return;
+
+  openBtn.addEventListener('click', () => {
+    resetReportForm();
+    dialog.showModal();
+  });
+
+  cancelBtn.addEventListener('click', () => dialog.close());
+
+  // Stuurt de melding (via een verborgen iframe, zodat je op de pagina blijft) naar de helpdesk-ticketing.
+  form.addEventListener('submit', () => {
+    const slotSelect = document.getElementById('reportSlot');
+    const [dayKey, periodStr] = slotSelect.value.split('|');
+    const slot = buildWeekSlots(new Date()).find((s) => s.dayKey === dayKey && String(s.period) === periodStr);
+
+    const naam = document.getElementById('reportName').value.trim() || 'Onbekend';
+    const namen = slot && slot.names.length ? slot.names.join(', ') : 'Er';
+    const werkwoord = slot && slot.names.length === 1 ? 'was' : 'waren';
+    const periode = slot ? `${slot.period}e` : periodStr;
+
+    document.getElementById('reportContactName').value = naam;
+    document.getElementById('reportSubject').value = `${namen} ${werkwoord} er niet het ${periode} uur`;
+
+    status.textContent = 'Bezig met versturen…';
+    status.removeAttribute('data-tone');
+    setTimeout(() => {
+      status.textContent = 'Bedankt! Je melding is verstuurd.';
+      status.dataset.tone = 'ok';
+      setTimeout(() => {
+        dialog.close();
+        resetReportForm();
+      }, 1800);
+    }, 800);
+  });
+}
+
 // ---------- Init ----------
 
 function update() {
@@ -362,6 +478,8 @@ document.querySelectorAll('[data-school-year]').forEach((el) => { el.textContent
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 }
+
+initReportForm();
 
 update();
 setInterval(update, 30000);

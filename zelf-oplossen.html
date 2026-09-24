@@ -68,6 +68,47 @@
 
       <div class="faq">
 
+        <details class="faq-item" id="mfa" data-keywords="mfa authenticator telefoon nieuwe toestel melding inloggen verificatie 2fa">
+          <summary><span class="faq-icon faq-icon--magenta" aria-hidden="true"></span>Ik krijg geen MFA-melding en ik kan niet inloggen</summary>
+          <div class="faq-item-body">
+            <p>Heb je een nieuwe telefoon, of krijg je geen melding als je wilt inloggen? Vul je gegevens in, dan reset de helpdesk je mfa.</p>
+            <p class="faq-note"><strong>Let op:</strong> dit duurt meestal 1 werkdag. Je mfa is dus niet meteen gereset — je hoeft niet nog een keer te melden als het niet meteen werkt.</p>
+            <iframe name="mfaTargetFrame" id="mfaTargetFrame" style="display:none" title="Verzendresultaat mfa-aanvraag"></iframe>
+            <form class="faq-form" id="mfaForm" action="https://desk.zoho.eu/support/WebToCase" method="POST" enctype="multipart/form-data" target="mfaTargetFrame">
+              <input type="hidden" name="xnQsjsdp" value="edbsneeeb703ba929cdb6807a4efa32f4d808">
+              <input type="hidden" name="xmIwtLD" value="edbsnc99cc49e31f7a76a9d853115a3821819fe1b2c371ee422159dc8c1f630ed2b4b">
+              <input type="hidden" name="xJdfEaS" value="">
+              <input type="hidden" name="actionType" value="Q2FzZXM=">
+              <input type="hidden" name="returnURL" value="*">
+              <input type="hidden" name="Subject" value="MFA reset">
+              <input type="hidden" name="Soort probleem" value="MFA reset">
+              <input type="hidden" name="Contact Name" id="mfaContactName" value="">
+              <input type="hidden" id="mfaEmail" name="Email" value="">
+              <div class="report-field">
+                <label for="mfaFullName">Voor- en achternaam</label>
+                <input type="text" id="mfaFullName" required autocomplete="name" placeholder="Bijv. Sanne de Vries">
+              </div>
+              <div class="report-field">
+                <label for="mfaNumber">Leerlingnummer</label>
+                <input type="text" id="mfaNumber" required inputmode="numeric" pattern="[0-9]+" autocomplete="off" placeholder="Bijv. 58123456">
+              </div>
+              <div class="report-actions">
+                <button type="submit" class="btn btn-dark">Versturen</button>
+              </div>
+              <p class="report-status" id="mfaStatus" role="status" aria-live="polite"></p>
+            </form>
+
+            <p class="faq-subhead">Zodra je mfa gereset is (meestal de volgende werkdag)</p>
+            <ol>
+              <li>Pak je schoolmail + wachtwoord, en je smartphone en laptop erbij.</li>
+              <li>Verwijder je oude account: open de Authenticator-app, tik op je oude account (meestal <strong>"Stichting LVO"</strong> met daaronder je schoolmail), tik rechtsboven op instellingen en kies <strong>"Account verwijderen"</strong>.</li>
+              <li>Ga op je laptop naar <strong>aka.ms/mfasetup</strong> en klik op <strong>"+ Aanmeldingsmethode toevoegen"</strong>. Kies <strong>Authenticator</strong> en klik op "Volgende" voor de QR-code.</li>
+              <li>Open de Authenticator-app op je telefoon, kies <strong>"Werk- of schoolaccount toevoegen"</strong> en scan de QR-code op je laptopscherm. Klik op volgende en voer de code in op je telefoon.</li>
+            </ol>
+            <p>Klaar! Lukt het niet? Loop dan even naar de helpdesk.</p>
+          </div>
+        </details>
+
         <details class="faq-item" id="wifi" data-keywords="internet netwerk verbinding online eduroam verbonden offline">
           <summary><span class="faq-icon faq-icon--blue" aria-hidden="true"></span>Geen internet of wifi doet raar</summary>
           <ol>
@@ -76,6 +117,10 @@
             <li>Nog steeds niks? Klik met rechts op het schoolnetwerk, kies <strong>Vergeten</strong> en maak opnieuw verbinding.</li>
             <li>Start je laptop opnieuw op.</li>
           </ol>
+          <div class="faq-resolved">
+            <button type="button" class="faq-resolved-btn">Het probleem is nu opgelost</button>
+            <p class="faq-resolved-status" aria-live="polite"></p>
+          </div>
         </details>
 
         <details class="faq-item" id="traag" data-keywords="langzaam vast hangt bevriest crasht update slow">
@@ -86,6 +131,10 @@
             <li>Staan er updates klaar? Ga naar <strong>Instellingen → Windows Update</strong>, installeer ze en start opnieuw op.</li>
             <li>Loopt hij helemaal vast? Houd de aan/uit-knop 10 seconden ingedrukt en zet hem daarna weer aan.</li>
           </ol>
+          <div class="faq-resolved">
+            <button type="button" class="faq-resolved-btn">Het probleem is nu opgelost</button>
+            <p class="faq-resolved-status" aria-live="polite"></p>
+          </div>
         </details>
 
         <details class="faq-item" id="opladen" data-keywords="batterij accu oplader stroom lader leeg">
@@ -96,16 +145,24 @@
             <li>Brandt het lampje op de oplader of laptop? Zo niet, probeer (als het kan) een andere oplader.</li>
             <li>Kijk of de kabel ergens geknakt of beschadigd is.</li>
           </ol>
+          <div class="faq-resolved">
+            <button type="button" class="faq-resolved-btn">Het probleem is nu opgelost</button>
+            <p class="faq-resolved-status" aria-live="polite"></p>
+          </div>
         </details>
 
         <details class="faq-item" id="geluid" data-keywords="audio volume speaker koptelefoon oortjes bluetooth horen">
-          <summary><span class="faq-icon faq-icon--magenta" aria-hidden="true"></span>Ik hoor geen geluid</summary>
+          <summary><span class="faq-icon faq-icon--lime" aria-hidden="true"></span>Ik hoor geen geluid</summary>
           <ol>
             <li>Staat het volume niet op nul of op dempen? Check het luidspreker-icoon rechtsonder.</li>
             <li>Klik op het luidspreker-icoon en kies het juiste apparaat (speakers of je koptelefoon).</li>
             <li>Koptelefoon? Haal de stekker eruit en doe hem er weer in. Bij bluetooth: verbinding verbreken en opnieuw koppelen.</li>
             <li>Kijk ook of het geluid in de website of app zelf niet uit staat.</li>
           </ol>
+          <div class="faq-resolved">
+            <button type="button" class="faq-resolved-btn">Het probleem is nu opgelost</button>
+            <p class="faq-resolved-status" aria-live="polite"></p>
+          </div>
         </details>
 
         <details class="faq-item" id="inloggen" data-keywords="wachtwoord account login website browser chrome edge pagina laden">
@@ -116,19 +173,81 @@
             <li>Probeer een privévenster (<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>N</kbd>) of een andere browser.</li>
             <li>Werkt het nog steeds niet? Wis je browsergeschiedenis en cookies en probeer het opnieuw.</li>
           </ol>
+          <div class="faq-resolved">
+            <button type="button" class="faq-resolved-btn">Het probleem is nu opgelost</button>
+            <p class="faq-resolved-status" aria-live="polite"></p>
+          </div>
+        </details>
+
+        <details class="faq-item" id="wachtwoord" data-keywords="wachtwoord password wijzigen veranderen reset vergeten account ctrl alt delete">
+          <summary><span class="faq-icon faq-icon--yellow" aria-hidden="true"></span>Ik wil mijn wachtwoord wijzigen</summary>
+          <ol>
+            <li>Ga naar een vaste computer of laptop die verbonden is met het schoolnetwerk (dus <strong>niet</strong> je eigen laptop).</li>
+            <li>Druk tegelijkertijd op <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>Del</kbd>.</li>
+            <li>Klik op <strong>Wachtwoord wijzigen</strong>.</li>
+            <li>Volg de instructies op het scherm.</li>
+            <li>Vul 1x je huidige wachtwoord in.</li>
+            <li>Vul 2x je nieuwe wachtwoord in.</li>
+          </ol>
+          <div class="faq-resolved">
+            <button type="button" class="faq-resolved-btn">Het probleem is nu opgelost</button>
+            <p class="faq-resolved-status" aria-live="polite"></p>
+          </div>
+        </details>
+
+        <details class="faq-item" id="printen" data-keywords="printen afdrukken printer canon uniflow mobileprint lvo cloud printerstuurprogramma">
+          <summary><span class="faq-icon faq-icon--red" aria-hidden="true"></span>Ik wil iets printen</summary>
+          <div class="faq-item-body">
+            <p class="faq-subhead">Ik heb een beetje haast, wat is de snelste manier?</p>
+            <ol>
+              <li>Log in op <a href="https://stichtinglvo.eu.uniflowonline.com" target="_blank" rel="noopener">stichtinglvo.eu.uniflowonline.com</a>.</li>
+              <li>Klik op "Ga verder met Stichting LVO".</li>
+              <li>Klik op "Beginnen met afdrukken" en sleep je bestand naar "Bestand verzenden".</li>
+              <li>Of: mail je bestand als bijlage naar <a href="mailto:mobileprint@stichtinglvo.eu.uniflowonline.com">mobileprint@stichtinglvo.eu.uniflowonline.com</a>.</li>
+            </ol>
+
+            <p class="faq-subhead">Ik wil printen net als thuis, maar zie geen "Canon Cloud Printer" bij mijn printers</p>
+            <ol>
+              <li>Log in op <a href="https://stichtinglvo.eu.uniflowonline.com" target="_blank" rel="noopener">stichtinglvo.eu.uniflowonline.com</a>.</li>
+              <li>Klik op "Ga verder met Stichting LVO".</li>
+              <li>Kies voor de optie 'Printerstuurprogramma installeren'.</li>
+              <li>Kies voor "Stuurprogramma Windows installeren" en volg de instructies.</li>
+            </ol>
+            <div class="faq-resolved">
+              <button type="button" class="faq-resolved-btn">Het probleem is nu opgelost</button>
+              <p class="faq-resolved-status" aria-live="polite"></p>
+            </div>
+          </div>
         </details>
 
         <details class="faq-item" id="scherm" data-keywords="zwart beeld toetsenbord touchpad muis usb toetsen">
-          <summary><span class="faq-icon faq-icon--lime" aria-hidden="true"></span>Mijn scherm, toetsenbord of touchpad doet het niet</summary>
+          <summary><span class="faq-icon faq-icon--dark" aria-hidden="true"></span>Mijn scherm, toetsenbord of touchpad doet het niet</summary>
           <ol>
             <li>Scherm zwart? Druk op een toets of op de aan/uit-knop. Misschien staat hij in slaapstand.</li>
             <li>Touchpad werkt niet? Veel laptops hebben een toets (vaak <kbd>F</kbd>-toets met een touchpad-icoon) om hem aan/uit te zetten.</li>
             <li>Muis of toetsenbord via USB? Probeer een andere USB-poort.</li>
             <li>Start opnieuw op.</li>
           </ol>
+          <div class="faq-resolved">
+            <button type="button" class="faq-resolved-btn">Het probleem is nu opgelost</button>
+            <p class="faq-resolved-status" aria-live="polite"></p>
+          </div>
         </details>
 
       </div>
+
+      <iframe name="resolvedTargetFrame" id="resolvedTargetFrame" style="display:none" title="Verzendresultaat probleem opgelost"></iframe>
+      <form id="resolvedForm" action="https://desk.zoho.eu/support/WebToCase" method="POST" enctype="multipart/form-data" target="resolvedTargetFrame" style="display:none">
+        <input type="hidden" name="xnQsjsdp" value="edbsneeeb703ba929cdb6807a4efa32f4d808">
+        <input type="hidden" name="xmIwtLD" value="edbsnc99cc49e31f7a76a9d853115a3821819f068558678f48f542080d48beaaa2375">
+        <input type="hidden" name="xJdfEaS" value="">
+        <input type="hidden" name="actionType" value="Q2FzZXM=">
+        <input type="hidden" name="returnURL" value="*">
+        <input type="hidden" name="Contact Name" value="webform">
+        <input type="hidden" name="Email" value="onbekend@leerling.dendron.nl">
+        <input type="hidden" name="Subject" id="resolvedSubject" value="">
+        <input type="hidden" name="Status" value="Closed">
+      </form>
 
       <p class="search-empty" id="searchEmpty" hidden>
         Niets gevonden. Kom langs bij de helpdesk in <strong>de mediatheek</strong> (niet E24), dan kijken we samen.
@@ -190,6 +309,42 @@
     faqItems.forEach((item) => { if (words.length === 0) item.open = false; });
     if (words.length && matches.length === 1) matches[0].open = true;
     searchEmpty.hidden = matches.length > 0;
+  });
+
+  // Mfa-formulier: vult e-mail automatisch in op basis van het leerlingnummer
+  // en stuurt de aanvraag (via een verborgen iframe, zodat je op de pagina blijft) naar de helpdesk-ticketing.
+  const mfaForm = document.getElementById('mfaForm');
+  const mfaNumberInput = document.getElementById('mfaNumber');
+  const mfaFullNameInput = document.getElementById('mfaFullName');
+  mfaForm.addEventListener('submit', () => {
+    const nummer = mfaNumberInput.value.trim();
+    document.getElementById('mfaContactName').value = mfaFullNameInput.value.trim();
+    document.getElementById('mfaEmail').value = `${nummer}@leerling.dendron.nl`;
+
+    const status = document.getElementById('mfaStatus');
+    status.textContent = 'Bezig met versturen…';
+    status.removeAttribute('data-tone');
+    setTimeout(() => {
+      status.textContent = 'Verstuurd! Dit duurt meestal 1 werkdag — je hoort niets tussentijds, dus geen nieuwe melding nodig.';
+      status.dataset.tone = 'ok';
+      mfaForm.reset();
+    }, 1200);
+  });
+
+  // "Het probleem is nu opgelost"-knoppen: sturen een ticket met als onderwerp de titel van dat FAQ-item.
+  const resolvedForm = document.getElementById('resolvedForm');
+  const resolvedSubjectInput = document.getElementById('resolvedSubject');
+  document.querySelectorAll('.faq-resolved-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      resolvedSubjectInput.value = item.querySelector('summary').textContent.trim();
+      resolvedForm.submit();
+
+      btn.disabled = true;
+      btn.textContent = 'Bedankt!';
+      const status = btn.nextElementSibling;
+      if (status) status.textContent = 'Fijn dat het gelukt is.';
+    });
   });
 
   if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {

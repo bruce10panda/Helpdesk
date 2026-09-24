@@ -50,14 +50,6 @@
       <h1>Wanneer is de helpdesk open?</h1>
       <p class="hero-intro">Hier zie je meteen of er nu iemand zit en wanneer je langs kunt komen. <strong>Makkelijk probleempje? Dan los je het vaak in een paar minuten zelf op.</strong></p>
 
-      <div class="location">
-        <svg class="location-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
-        <div>
-          <p class="location-place">Je vindt ons in <strong data-location>de mediatheek</strong></p>
-          <p class="location-warning" data-location-warning>Let op: niet in E24!</p>
-        </div>
-      </div>
-
       <div class="status-grid" aria-live="polite">
         <article class="card card--now" id="nowCard">
           <p class="card-label">Nu</p>
@@ -77,6 +69,7 @@
         </div>
         <a class="btn btn-yellow" href="zelf-oplossen.html">Zelf je probleem oplossen <span aria-hidden="true">→</span></a>
         <ul class="selfhelp-chips" aria-label="Veelvoorkomende problemen">
+          <li><a href="zelf-oplossen.html#mfa">Geen mfa-melding / kan niet inloggen</a></li>
           <li><a href="zelf-oplossen.html#wifi">Geen wifi</a></li>
           <li><a href="zelf-oplossen.html#traag">Laptop traag</a></li>
           <li><a href="zelf-oplossen.html#opladen">Laadt niet op</a></li>
@@ -133,33 +126,88 @@
     </div>
   </section>
 
+  <!-- Melden: niemand aanwezig tijdens ingeroosterd uur -->
+  <section class="section section--report no-print" id="report">
+    <div class="wrap">
+      <button type="button" class="btn" id="reportOpenBtn" aria-haspopup="dialog" aria-controls="reportDialog">
+        Zit er niemand terwijl het wel gepland stond? Meld het <span aria-hidden="true">→</span>
+      </button>
+    </div>
+  </section>
+
+  <dialog class="report-dialog no-print" id="reportDialog">
+    <iframe name="reportTargetFrame" id="reportTargetFrame" style="display:none" title="Verzendresultaat melding"></iframe>
+    <form class="report-form" id="reportForm" action="https://desk.zoho.eu/support/WebToCase" method="POST" enctype="multipart/form-data" target="reportTargetFrame">
+      <input type="hidden" name="xnQsjsdp" value="edbsneeeb703ba929cdb6807a4efa32f4d808">
+      <input type="hidden" name="xmIwtLD" value="edbsnc99cc49e31f7a76a9d853115a38218190ee532fbfa03d89999647d38cb2911f1">
+      <input type="hidden" name="xJdfEaS" value="">
+      <input type="hidden" name="actionType" value="Q2FzZXM=">
+      <input type="hidden" name="returnURL" value="*">
+      <input type="hidden" name="Contact Name" id="reportContactName" value="">
+      <input type="hidden" name="Email" value="onbekend@leerling.dendron.nl">
+      <input type="hidden" name="Subject" id="reportSubject" value="">
+
+      <div class="report-dialog-head">
+        <h3>Zit er niemand, terwijl het wel gepland stond?</h3>
+        <button type="button" class="report-dialog-close" id="reportCancelBtn" aria-label="Sluiten">&times;</button>
+      </div>
+      <p class="report-dialog-intro">Meld het even, dan weten de coördinatoren dat er iemand gemist is.</p>
+      <div class="report-field">
+        <label for="reportSlot">Welk lesuur ging het mis?</label>
+        <select id="reportSlot" required></select>
+      </div>
+      <div class="report-field">
+        <label for="reportName">Je naam <span class="report-optional">(optioneel)</span></label>
+        <input type="text" id="reportName" placeholder="Bijv. Sanne de Vries" autocomplete="name">
+      </div>
+      <div class="report-field">
+        <label for="reportNote">Extra info <span class="report-optional">(optioneel)</span></label>
+        <textarea id="reportNote" name="Description" rows="3" placeholder="Bijv. Ik ben om 10:10 langsgeweest, er zat niemand."></textarea>
+      </div>
+      <div class="report-actions">
+        <button type="submit" class="btn btn-dark" id="reportSubmitBtn">Versturen</button>
+      </div>
+      <p class="report-status" id="reportStatus" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
+
   <!-- Goed om te weten -->
   <section class="section section--tips">
     <div class="wrap">
       <h2>Goed om te weten</h2>
       <div class="tips">
         <article class="tip tip--location">
-          <span class="tip-icon tip-icon--yellow" aria-hidden="true"></span>
+          <span class="tip-icon tip-icon--yellow" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+          </span>
           <h3>Waar zitten we?</h3>
           <p>In <strong data-location>de mediatheek</strong>. <span class="tip-warning" data-location-warning>Let op: niet in E24!</span></p>
         </article>
         <article class="tip">
-          <span class="tip-icon tip-icon--orange" aria-hidden="true"></span>
+          <span class="tip-icon tip-icon--orange" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+          </span>
           <h3>Niet vóór 08:15 uur</h3>
           <p>Voor het eerste lesuur zit er nog niemand bij de helpdesk.</p>
         </article>
         <article class="tip">
-          <span class="tip-icon tip-icon--blue" aria-hidden="true"></span>
+          <span class="tip-icon tip-icon--blue" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M6 3h12M8 3v4a4 4 0 0 0 8 0V3M8 21v-4a4 4 0 0 1 8 0v4M6 21h12"/></svg>
+          </span>
           <h3>Pas als de les begonnen is</h3>
           <p>Er zit pas iemand klaar als een lesuur echt begonnen is. Geef het dus even een paar minuten.</p>
         </article>
         <article class="tip">
-          <span class="tip-icon tip-icon--teal" aria-hidden="true"></span>
+          <span class="tip-icon tip-icon--teal" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 10h13a3 3 0 0 1 0 6h-1"/><path d="M4 10v7a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-7"/><path d="M6 3v2M10 3v2M14 3v2"/></svg>
+          </span>
           <h3>In de pauze? Kom kijken!</h3>
           <p>Tijdens de pauzes zitten er vaak ook mensen. Loop gerust even langs.</p>
         </article>
         <article class="tip">
-          <span class="tip-icon tip-icon--magenta" aria-hidden="true"></span>
+          <span class="tip-icon tip-icon--magenta" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+          </span>
           <h3>Ook in tussenuren</h3>
           <p>Helpdeskers zitten er ook in hun tussenuur. Die uren staan niet op het rooster.</p>
         </article>
