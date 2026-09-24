@@ -1,40 +1,25 @@
-// ---------- Data: rooster ICT Helpdesk 2026-2027 ----------
-
-const HOURS = [
-  { period: 1, start: '08:15', end: '09:05' },
-  { period: 2, start: '09:05', end: '09:55' },
-  { period: 3, start: '09:55', end: '10:45' },
-  { period: 4, start: '11:05', end: '11:55' },
-  { period: 5, start: '11:55', end: '12:45' },
-  { period: 6, start: '13:15', end: '14:05' },
-  { period: 7, start: '14:05', end: '14:55' },
-  { period: 8, start: '14:55', end: '15:45' },
-];
-
-// Per dag: namen per uur, in dezelfde volgorde als HOURS.
-const SCHEDULE = {
-  maandag: [['Bruce'], ['Bert', 'Robin'], [], [], ['Jarne'], ['Teun'], ['Ruben'], []],
-  dinsdag: [['Bruce'], ['Bruce', 'Bert'], ['Sjoerd'], ['Sjoerd'], [], [], [], []],
-  woensdag: [[], [], [], [], ['Ruben'], ['Ruben'], ['Jarne'], []],
-  donderdag: [['Bruce'], [], ['Robin'], [], [], ['Bert'], ['Ruben'], []],
-  vrijdag: [[], ['Bruce', 'Teun'], ['Robin', 'Jarne'], ['Bruce', 'Teun'], ['Robin', 'Jarne'], [], [], []],
-};
+// Het rooster zelf (HOURS, SCHEDULE, NAME_COLOR, LOCATION, SCHOOL_YEAR) staat in rooster.js.
 
 const DAY_LABELS = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'];
+const SCHOOL_DAYS = ['maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag'];
 
-const NAME_COLOR = {
-  Bruce: 'blue',
-  Bert: 'orange',
-  Robin: 'magenta',
-  Sjoerd: 'teal',
-  Jarne: 'lime',
-  Teun: 'lightblue',
-  Ruben: 'dark',
-};
+// Pauzes = gaten tussen twee opeenvolgende lesuren.
+const BREAKS = HOURS.slice(1)
+  .map((hour, i) => ({ after: i, start: HOURS[i].end, end: hour.start }))
+  .filter((b) => b.start !== b.end);
 
 // ---------- Helpers ----------
 
-function timeStringToDate(baseDate, hhmm) {
+function isSchoolDay(dayKey) {
+  return SCHOOL_DAYS.includes(dayKey);
+}
+
+// Wie er op een dag in een bepaald lesuur zit (lege lijst als niemand).
+function namesFor(dayKey, period) {
+  return (SCHEDULE[dayKey] && SCHEDULE[dayKey][period]) || [];
+}
+
+function atTime(baseDate, hhmm) {
   const [h, m] = hhmm.split(':').map(Number);
   const d = new Date(baseDate);
   d.setHours(h, m, 0, 0);
@@ -45,36 +30,6 @@ function isSameDate(a, b) {
   return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 }
 
-function nameBadge(name) {
-  const color = NAME_COLOR[name] || 'dark';
-  return `<span class="badge badge-${color}">${name}</span>`;
-}
-
-function buildOccurrences(fromDate, daysAhead) {
-  const occurrences = [];
-  for (let i = 0; i < daysAhead; i++) {
-    const day = new Date(fromDate);
-    day.setDate(day.getDate() + i);
-    day.setHours(0, 0, 0, 0);
-
-    const dayKey = DAY_LABELS[day.getDay()];
-    const daySchedule = SCHEDULE[dayKey];
-    if (!daySchedule) continue; // weekend
-
-    HOURS.forEach((hour, idx) => {
-      occurrences.push({
-        date: new Date(day),
-        dayKey,
-        period: hour.period,
-        start: timeStringToDate(day, hour.start),
-        end: timeStringToDate(day, hour.end),
-        names: daySchedule[idx],
-      });
-    });
-  }
-  return occurrences;
-}
-
 function formatTime(date) {
   return date.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
 }
@@ -83,147 +38,330 @@ function capitalize(word) {
   return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
-function describeMoment(now, occurrence) {
-  if (isSameDate(now, occurrence.date)) {
-    return `Vandaag om ${formatTime(occurrence.start)}`;
+function nameBadge(name) {
+  const color = NAME_COLOR[name] || 'dark';
+  return `<span class="badge badge-${color}">${name}</span>`;
+}
+
+function minutesUntil(now, date) {
+  return Math.max(1, Math.round((date - now) / 60000));
+}
+
+// Alle lesuren van vandaag tot `daysAhead` dagen vooruit.
+function buildOccurrences(fromDate, daysAhead) {
+  const occurrences = [];
+  for (let i = 0; i < daysAhead; i++) {
+    const day = new Date(fromDate);
+    day.setDate(day.getDate() + i);
+    day.setHours(0, 0, 0, 0);
+
+    const dayKey = DAY_LABELS[day.getDay()];
+    if (!isSchoolDay(dayKey)) continue; // weekend
+
+    HOURS.forEach((hour) => {
+      occurrences.push({
+        date: new Date(day),
+        dayKey,
+        period: hour.period,
+        start: atTime(day, hour.start),
+        end: atTime(day, hour.end),
+        names: namesFor(dayKey, hour.period),
+      });
+    });
   }
+  return occurrences;
+}
+
+// Voegt aansluitende open lesuren samen tot één blok (bijv. 08:15–09:55).
+function buildOpenBlocks(occurrences) {
+  const blocks = [];
+  occurrences.filter((o) => o.names.length).forEach((o) => {
+    const last = blocks[blocks.length - 1];
+    if (last && last.end.getTime() === o.start.getTime()) {
+      last.end = o.end;
+      last.periods.push(o.period);
+    } else {
+      blocks.push({ date: o.date, dayKey: o.dayKey, start: o.start, end: o.end, periods: [o.period] });
+    }
+  });
+  return blocks;
+}
+
+function describeDay(now, date, dayKey) {
+  if (isSameDate(now, date)) return 'Vandaag';
   const tomorrow = new Date(now);
   tomorrow.setDate(tomorrow.getDate() + 1);
-  if (isSameDate(tomorrow, occurrence.date)) {
-    return `Morgen om ${formatTime(occurrence.start)}`;
-  }
-  const dayName = capitalize(occurrence.dayKey);
-  const dateLabel = occurrence.date.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long' });
-  return `${dayName} ${dateLabel} om ${formatTime(occurrence.start)}`;
+  if (isSameDate(tomorrow, date)) return 'Morgen';
+  return capitalize(dayKey);
 }
 
-// ---------- Render: status cards ----------
+function describePeriods(periods) {
+  return periods.length === 1
+    ? `${periods[0]}e uur`
+    : `${periods[0]}e t/m ${periods[periods.length - 1]}e uur`;
+}
 
-function renderNowCard(now, occurrences) {
+// ---------- Render: live status ----------
+
+function renderNowCard(now, occurrences, blocks) {
+  const card = document.getElementById('nowCard');
   const body = document.getElementById('nowCardBody');
-  const current = occurrences.find((o) => now >= o.start && now < o.end && o.names.length > 0);
+  const current = occurrences.find((o) => now >= o.start && now < o.end);
+  const next = blocks.find((b) => b.start > now);
+  const nextText = next
+    ? `${describeDay(now, next.date, next.dayKey).toLowerCase()} om ${formatTime(next.start)} uur`
+    : null;
 
-  if (current) {
-    body.innerHTML = `
-      <p class="status-pill"><span class="status-dot status-dot--open"></span>Ja, er zit nu iemand!</p>
-      <p class="card-meta">Tot ${formatTime(current.end)} uur</p>
+  const todayKey = DAY_LABELS[now.getDay()];
+  const inBreak = isSchoolDay(todayKey) && BREAKS.find((b) => now >= atTime(now, b.start) && now < atTime(now, b.end));
+
+  let state;
+  let html;
+  let tabLabel;
+
+  if (current && current.names.length) {
+    const block = blocks.find((b) => now >= b.start && now < b.end);
+    state = 'open';
+    tabLabel = `● Open tot ${formatTime(block.end)}`;
+    html = `
+      <p class="status"><span class="status-dot"></span>Open</p>
+      <p class="status-text">Er zit nu iemand klaar, nog tot <strong>${formatTime(block.end)} uur</strong>.</p>
+      <div class="badges">${current.names.map(nameBadge).join('')}</div>
+    `;
+  } else if (inBreak) {
+    state = 'maybe';
+    tabLabel = 'Pauze';
+    html = `
+      <p class="status"><span class="status-dot"></span>Pauze</p>
+      <p class="status-text">Er is niemand ingeroosterd, maar in de pauze zit er vaak toch iemand. Loop even langs!</p>
+      ${nextText ? `<p class="status-meta">Zeker open: ${nextText}</p>` : ''}
+    `;
+  } else if (current) {
+    // Lesuur zonder rooster: misschien zit er iemand in een tussenuur.
+    state = 'unscheduled';
+    tabLabel = 'Niet ingeroosterd';
+    html = `
+      <p class="status"><span class="status-dot"></span>Niet ingeroosterd</p>
+      <p class="status-text">Er staat nu niemand op het rooster. Soms zit er iemand in een tussenuur, dus kijken kan altijd.</p>
+      ${nextText ? `<p class="status-meta">Zeker open: <strong>${nextText}</strong></p>` : ''}
     `;
   } else {
-    body.innerHTML = `
-      <p class="status-pill"><span class="status-dot status-dot--closed"></span>Nu even niemand</p>
-      <p class="card-sub">Kijk hieronder wanneer je de volgende keer terecht kunt.</p>
+    state = 'closed';
+    tabLabel = 'Gesloten';
+    html = `
+      <p class="status"><span class="status-dot"></span>Gesloten</p>
+      <p class="status-text">Er zit nu niemand bij de helpdesk.</p>
+      ${nextText ? `<p class="status-meta">Weer open: <strong>${nextText}</strong></p>` : ''}
     `;
   }
+
+  card.dataset.state = state;
+  body.innerHTML = html;
+
+  renderTabStatus(state, tabLabel);
 }
 
-function renderNextCard(now, occurrences) {
-  const body = document.getElementById('nextCardBody');
-  const upcoming = occurrences
-    .filter((o) => o.start > now && o.names.length > 0)
-    .sort((a, b) => a.start - b.start)
-    .slice(0, 3);
+// ---------- Tabblad: titel + favicon volgen de status ----------
 
-  if (upcoming.length) {
-    body.innerHTML = `
-      <ul class="next-list">
-        ${upcoming.map((o) => `
-          <li>
-            <span class="next-when">${describeMoment(now, o)}</span>
-            <span class="next-time">tot ${formatTime(o.end)} uur</span>
-          </li>
-        `).join('')}
-      </ul>
-    `;
-  } else {
-    body.innerHTML = `<p class="card-sub">Er is voorlopig geen helpdesk-uur gepland.</p>`;
+const BASE_TITLE = 'ICT Helpdesk — Dendron College';
+const STATE_COLOR = { open: '#009987', maybe: '#5bc5f2', unscheduled: '#af1280', closed: '#e74310' };
+
+function faviconFor(color) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">`
+    + `<path d="M60 58H4L32 4z" fill="#ffcc00"/>`
+    + `<circle cx="48" cy="46" r="13" fill="${color}" stroke="#fff" stroke-width="4"/></svg>`;
+  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+}
+
+function renderTabStatus(state, label) {
+  const title = `${label} · ${BASE_TITLE}`;
+  if (document.title !== title) document.title = title;
+
+  const favicon = document.getElementById('favicon');
+  const href = faviconFor(STATE_COLOR[state]);
+  if (favicon && favicon.getAttribute('href') !== href) favicon.setAttribute('href', href);
+}
+
+function renderNextCard(now, blocks) {
+  const body = document.getElementById('nextCardBody');
+  const upcoming = blocks.filter((b) => b.start > now).slice(0, 3);
+
+  if (!upcoming.length) {
+    body.innerHTML = '<p class="status-text">Er is voorlopig geen helpdesk-uur gepland.</p>';
+    return;
   }
+
+  body.innerHTML = `
+    <ul class="next-list">
+      ${upcoming.map((b) => {
+        const soon = isSameDate(now, b.date) && b.start - now < 60 * 60000
+          ? `<span class="soon">over ${minutesUntil(now, b.start)} min</span>`
+          : '';
+        return `
+          <li>
+            <span class="next-day">${describeDay(now, b.date, b.dayKey)}${soon}</span>
+            <span class="next-time">${formatTime(b.start)} – ${formatTime(b.end)}</span>
+            <span class="next-period">${describePeriods(b.periods)}</span>
+          </li>
+        `;
+      }).join('')}
+    </ul>
+  `;
 }
 
 function renderClock(now) {
-  const line = document.getElementById('clockLine');
   const dayName = capitalize(DAY_LABELS[now.getDay()]);
-  line.textContent = `Het is nu ${dayName} ${formatTime(now)} uur`;
+  document.getElementById('clockLine').textContent = `Het is nu ${dayName} ${formatTime(now)} uur`;
 }
 
 function renderPrintMeta(now) {
-  const meta = document.getElementById('printMeta');
-  const dayName = capitalize(DAY_LABELS[now.getDay()]);
-  const dateLabel = now.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' });
-  meta.textContent = `Afgedrukt op ${dayName} ${dateLabel} om ${formatTime(now)} uur`;
+  const dateLabel = now.toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  document.getElementById('printMeta').textContent = `Afgedrukt op ${dateLabel}`;
 }
 
-function updateStatus() {
-  const now = new Date();
-  const occurrences = buildOccurrences(now, 9);
-  renderNowCard(now, occurrences);
-  renderNextCard(now, occurrences);
-  renderClock(now);
-  renderScheduleTable(now);
-  renderPrintMeta(now);
+// ---------- Render: dagweergave (mobiel) ----------
+
+let selectedDay = null;
+
+function defaultDay(now) {
+  const todayKey = DAY_LABELS[now.getDay()];
+  return isSchoolDay(todayKey) ? todayKey : 'maandag';
 }
 
-// ---------- Render: full schedule table ----------
-
-function renderScheduleTable(now) {
-  const tbody = document.getElementById('scheduleTableBody');
-  const dayKeys = ['maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag'];
+function renderDayTabs(now) {
+  const tabs = document.getElementById('dayTabs');
   const todayKey = DAY_LABELS[now.getDay()];
 
-  const rows = HOURS.map((hour, idx) => {
-    const cells = dayKeys.map((dayKey) => {
-      const names = SCHEDULE[dayKey][idx];
-      const start = timeStringToDate(now, hour.start);
-      const end = timeStringToDate(now, hour.end);
-      const isNow = dayKey === todayKey && now >= start && now < end;
+  tabs.innerHTML = SCHOOL_DAYS.map((dayKey) => `
+    <button type="button" role="tab" class="day-tab${dayKey === todayKey ? ' is-today' : ''}"
+      aria-selected="${dayKey === selectedDay}" data-day="${dayKey}">
+      <span class="day-tab-short">${capitalize(dayKey.slice(0, 2))}</span>
+      <span class="day-tab-long">${capitalize(dayKey)}</span>
+    </button>
+  `).join('');
+}
+
+function renderDayList(now) {
+  const list = document.getElementById('dayList');
+  const todayKey = DAY_LABELS[now.getDay()];
+  const isToday = selectedDay === todayKey;
+  const rows = [];
+
+  HOURS.forEach((hour, idx) => {
+    const names = namesFor(selectedDay, hour.period);
+    const isNow = isToday && now >= atTime(now, hour.start) && now < atTime(now, hour.end);
+    const isPast = isToday && now >= atTime(now, hour.end);
+    const classes = ['slot', names.length ? 'slot--open' : 'slot--closed', isNow && 'is-now', isPast && 'is-past']
+      .filter(Boolean).join(' ');
+
+    rows.push(`
+      <li class="${classes}">
+        <span class="slot-time"><strong>${hour.start}</strong> – ${hour.end}</span>
+        <span class="slot-period">${hour.period}e uur${isNow ? ' <span class="now-tag">nu</span>' : ''}</span>
+        <span class="slot-status">
+          ${names.length ? `<span class="badges">${names.map(nameBadge).join('')}</span>` : '<span class="slot-closed">Niet ingeroosterd</span>'}
+        </span>
+      </li>
+    `);
+
+    const pause = BREAKS.find((b) => b.after === idx);
+    if (pause) {
+      const pauseNow = isToday && now >= atTime(now, pause.start) && now < atTime(now, pause.end);
+      rows.push(`
+        <li class="slot slot--break${pauseNow ? ' is-now' : ''}">
+          <span class="slot-time">${pause.start} – ${pause.end}</span>
+          <span class="slot-period">Pauze${pauseNow ? ' <span class="now-tag">nu</span>' : ''}</span>
+        </li>
+      `);
+    }
+  });
+
+  list.innerHTML = rows.join('');
+  list.setAttribute('aria-label', `Rooster ${selectedDay}`);
+}
+
+document.getElementById('dayTabs').addEventListener('click', (e) => {
+  const tab = e.target.closest('[data-day]');
+  if (!tab) return;
+  selectedDay = tab.dataset.day;
+  const now = new Date();
+  renderDayTabs(now);
+  renderDayList(now);
+});
+
+// ---------- Render: weekoverzicht ----------
+
+function renderWeekTable(now) {
+  const todayKey = DAY_LABELS[now.getDay()];
+
+  document.getElementById('scheduleHead').innerHTML = `
+    <th scope="col">Uur</th>
+    ${SCHOOL_DAYS.map((d) => `<th scope="col" class="${d === todayKey ? 'is-today' : ''}">${capitalize(d)}${d === todayKey ? ' <span class="today-tag">vandaag</span>' : ''}</th>`).join('')}
+  `;
+
+  const rows = [];
+  HOURS.forEach((hour, idx) => {
+    const cells = SCHOOL_DAYS.map((dayKey) => {
+      const names = namesFor(dayKey, hour.period);
+      const isToday = dayKey === todayKey;
+      const isNow = isToday && now >= atTime(now, hour.start) && now < atTime(now, hour.end);
+      const classes = [names.length ? 'is-open' : '', isToday ? 'is-today' : '', isNow ? 'is-now' : '']
+        .filter(Boolean).join(' ');
       const content = names.length
-        ? `<div class="cell-names">${names.map(nameBadge).join('')}</div>`
-        : `<span class="cell-empty">—</span>`;
-      return `<td class="${isNow ? 'is-now' : ''}">${content}</td>`;
+        ? `<div class="badges">${names.map(nameBadge).join('')}</div>`
+        : '<span class="cell-empty" aria-label="gesloten">–</span>';
+      return `<td class="${classes}">${content}</td>`;
     }).join('');
 
-    return `
+    rows.push(`
       <tr>
-        <th scope="row">${hour.period}e uur<br><small>${hour.start}–${hour.end}</small></th>
+        <th scope="row"><span class="row-period">${hour.period}e uur</span><span class="row-time">${hour.start} – ${hour.end}</span></th>
         ${cells}
       </tr>
-    `;
-  }).join('');
+    `);
 
-  tbody.innerHTML = rows;
+    const pause = BREAKS.find((b) => b.after === idx);
+    if (pause) {
+      rows.push(`
+        <tr class="break-row">
+          <th scope="row">Pauze</th>
+          <td colspan="${SCHOOL_DAYS.length}">${pause.start} – ${pause.end}</td>
+        </tr>
+      `);
+    }
+  });
+
+  document.getElementById('scheduleBody').innerHTML = rows.join('');
 }
-
-// ---------- Modal ----------
-
-const modal = document.getElementById('scheduleModal');
-const backdrop = document.getElementById('modalBackdrop');
-const openBtn = document.getElementById('openScheduleBtn');
-const closeBtn = document.getElementById('closeModalBtn');
-const printBtn = document.getElementById('printScheduleBtn');
-
-function openModal() {
-  modal.hidden = false;
-  backdrop.classList.add('is-visible');
-  document.body.style.overflow = 'hidden';
-  closeBtn.focus();
-}
-
-function closeModal() {
-  modal.hidden = true;
-  backdrop.classList.remove('is-visible');
-  document.body.style.overflow = '';
-  openBtn.focus();
-}
-
-openBtn.addEventListener('click', openModal);
-closeBtn.addEventListener('click', closeModal);
-backdrop.addEventListener('click', closeModal);
-printBtn.addEventListener('click', () => window.print());
-
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && !modal.hidden) closeModal();
-});
 
 // ---------- Init ----------
 
-updateStatus();
-setInterval(updateStatus, 30000);
+function update() {
+  const now = new Date();
+  const occurrences = buildOccurrences(now, 9);
+  const blocks = buildOpenBlocks(occurrences);
+  if (!selectedDay) selectedDay = defaultDay(now);
+
+  renderNowCard(now, occurrences, blocks);
+  renderNextCard(now, blocks);
+  renderClock(now);
+  renderDayTabs(now);
+  renderDayList(now);
+  renderWeekTable(now);
+  renderPrintMeta(now);
+}
+
+document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+// Vaste teksten uit rooster.js invullen.
+document.querySelectorAll('[data-location]').forEach((el) => { el.textContent = LOCATION.place; });
+document.querySelectorAll('[data-location-warning]').forEach((el) => { el.textContent = LOCATION.warning; });
+document.querySelectorAll('[data-school-year]').forEach((el) => { el.textContent = SCHOOL_YEAR; });
+
+// Web-app: offline beschikbaar en installeerbaar (alleen via http(s), niet via file://).
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+
+update();
+setInterval(update, 30000);

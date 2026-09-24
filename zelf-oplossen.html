@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zelf oplossen — ICT Helpdesk Dendron College</title>
+<meta name="description" content="Snel zelf een makkelijk ICT-probleem oplossen: wifi, geluid, een trage laptop, opladen en inloggen.">
+<meta name="theme-color" content="#ffcc00">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 233 259'%3E%3Cpath d='M233 259H0L116.5 0z' fill='%23ffcc00'/%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Helpdesk">
+<!-- Deelpreview (Teams, WhatsApp). TODO: zet og:image op de volledige URL zodra de site online staat. -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Zelf je probleem oplossen — ICT Helpdesk Dendron">
+<meta property="og:description" content="Wifi, geluid, trage laptop? Los makkelijke ICT-problemen in een paar minuten zelf op.">
+<meta property="og:image" content="icons/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,300;6..12,400;6..12,600;6..12,700;6..12,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="back-link" href="index.html">
+      <span aria-hidden="true">←</span> Openingstijden
+    </a>
+    <img src="logo%20kleur.svg" alt="Dendron college" class="logo-img">
+  </div>
+</header>
+
+<main>
+
+  <section class="hero hero--compact">
+    <svg class="hero-pattern" viewBox="0 0 466 518" aria-hidden="true" preserveAspectRatio="xMaxYMax meet">
+      <path d="M466 518H233L349.5 259Z" fill="#fff"/>
+      <path d="M349.5 259H233L291.25 129.5Z" fill="#fff" opacity=".55"/>
+      <path d="M466 259H349.5L407.75 129.5Z" fill="#fff" opacity=".35"/>
+      <path d="M233 518H116.5L174.75 388.5Z" fill="#fff" opacity=".7"/>
+    </svg>
+
+    <div class="wrap hero-inner">
+      <p class="eyebrow">ICT Helpdesk voor leerlingen</p>
+      <h1>Zelf je probleem oplossen</h1>
+      <p class="hero-intro">Veel problemen los je in een paar minuten zelf op. Kies hieronder wat er aan de hand is en volg de stappen van boven naar beneden.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+
+      <div class="first-aid">
+        <span class="first-aid-num" aria-hidden="true">1</span>
+        <div>
+          <h2 class="first-aid-title">Probeer eerst altijd dit: opnieuw opstarten</h2>
+          <p>Klik op <strong>Start → Aan/uit → Opnieuw opstarten</strong>. Alleen je laptop dichtklappen is niet genoeg. Dit lost meer problemen op dan je denkt!</p>
+        </div>
+      </div>
+
+      <div class="search">
+        <label class="visually-hidden" for="faqSearch">Zoek je probleem</label>
+        <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M10 2a8 8 0 0 1 6.32 12.9l5.39 5.4-1.42 1.4-5.39-5.38A8 8 0 1 1 10 2zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z"/></svg>
+        <input type="search" id="faqSearch" placeholder="Zoek je probleem, bijv. wifi, geluid, traag…" autocomplete="off">
+      </div>
+
+      <div class="faq">
+
+        <details class="faq-item" id="wifi" data-keywords="internet netwerk verbinding online eduroam verbonden offline">
+          <summary><span class="faq-icon faq-icon--blue" aria-hidden="true"></span>Geen internet of wifi doet raar</summary>
+          <ol>
+            <li>Zet wifi uit en weer aan (klik op het wifi-icoon rechtsonder).</li>
+            <li>Staat de <strong>vliegtuigmodus</strong> aan? Zet hem uit.</li>
+            <li>Nog steeds niks? Klik met rechts op het schoolnetwerk, kies <strong>Vergeten</strong> en maak opnieuw verbinding.</li>
+            <li>Start je laptop opnieuw op.</li>
+          </ol>
+        </details>
+
+        <details class="faq-item" id="traag" data-keywords="langzaam vast hangt bevriest crasht update slow">
+          <summary><span class="faq-icon faq-icon--orange" aria-hidden="true"></span>Mijn laptop is traag of loopt vast</summary>
+          <ol>
+            <li>Sluit programma's en tabbladen die je niet gebruikt.</li>
+            <li>Start opnieuw op (dus niet alleen dichtklappen).</li>
+            <li>Staan er updates klaar? Ga naar <strong>Instellingen → Windows Update</strong>, installeer ze en start opnieuw op.</li>
+            <li>Loopt hij helemaal vast? Houd de aan/uit-knop 10 seconden ingedrukt en zet hem daarna weer aan.</li>
+          </ol>
+        </details>
+
+        <details class="faq-item" id="opladen" data-keywords="batterij accu oplader stroom lader leeg">
+          <summary><span class="faq-icon faq-icon--teal" aria-hidden="true"></span>Mijn laptop laadt niet op</summary>
+          <ol>
+            <li>Zit de stekker goed in het stopcontact én in je laptop?</li>
+            <li>Probeer een ander stopcontact.</li>
+            <li>Brandt het lampje op de oplader of laptop? Zo niet, probeer (als het kan) een andere oplader.</li>
+            <li>Kijk of de kabel ergens geknakt of beschadigd is.</li>
+          </ol>
+        </details>
+
+        <details class="faq-item" id="geluid" data-keywords="audio volume speaker koptelefoon oortjes bluetooth horen">
+          <summary><span class="faq-icon faq-icon--magenta" aria-hidden="true"></span>Ik hoor geen geluid</summary>
+          <ol>
+            <li>Staat het volume niet op nul of op dempen? Check het luidspreker-icoon rechtsonder.</li>
+            <li>Klik op het luidspreker-icoon en kies het juiste apparaat (speakers of je koptelefoon).</li>
+            <li>Koptelefoon? Haal de stekker eruit en doe hem er weer in. Bij bluetooth: verbinding verbreken en opnieuw koppelen.</li>
+            <li>Kijk ook of het geluid in de website of app zelf niet uit staat.</li>
+          </ol>
+        </details>
+
+        <details class="faq-item" id="inloggen" data-keywords="wachtwoord account login website browser chrome edge pagina laden">
+          <summary><span class="faq-icon faq-icon--lightblue" aria-hidden="true"></span>Een website doet raar of inloggen lukt niet</summary>
+          <ol>
+            <li>Vernieuw de pagina (<kbd>F5</kbd> of <kbd>Ctrl</kbd> + <kbd>R</kbd>).</li>
+            <li>Staat <strong>Caps Lock</strong> aan? Let op hoofdletters in je wachtwoord.</li>
+            <li>Probeer een privévenster (<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>N</kbd>) of een andere browser.</li>
+            <li>Werkt het nog steeds niet? Wis je browsergeschiedenis en cookies en probeer het opnieuw.</li>
+          </ol>
+        </details>
+
+        <details class="faq-item" id="scherm" data-keywords="zwart beeld toetsenbord touchpad muis usb toetsen">
+          <summary><span class="faq-icon faq-icon--lime" aria-hidden="true"></span>Mijn scherm, toetsenbord of touchpad doet het niet</summary>
+          <ol>
+            <li>Scherm zwart? Druk op een toets of op de aan/uit-knop. Misschien staat hij in slaapstand.</li>
+            <li>Touchpad werkt niet? Veel laptops hebben een toets (vaak <kbd>F</kbd>-toets met een touchpad-icoon) om hem aan/uit te zetten.</li>
+            <li>Muis of toetsenbord via USB? Probeer een andere USB-poort.</li>
+            <li>Start opnieuw op.</li>
+          </ol>
+        </details>
+
+      </div>
+
+      <p class="search-empty" id="searchEmpty" hidden>
+        Niets gevonden. Kom langs bij de helpdesk in <strong>de mediatheek</strong> (niet E24), dan kijken we samen.
+        <a href="index.html">Bekijk wanneer we open zijn →</a>
+      </p>
+
+      <div class="selfhelp-banner selfhelp-banner--end">
+        <div>
+          <h3>Lukt het niet?</h3>
+          <p>Geen probleem! Kom langs bij de helpdesk, dan kijken we samen. Vertel dan meteen wat je al geprobeerd hebt.</p>
+        </div>
+        <a class="btn btn-dark" href="index.html">Wanneer is de helpdesk open? <span aria-hidden="true">→</span></a>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div>
+      <p class="footer-title">Dendron College</p>
+      <p>Gebr. van Doornelaan 124, 5961 BE Horst</p>
+    </div>
+    <a class="footer-link" href="https://www.dendrondashboard.online/">← Terug naar het dashboard</a>
+  </div>
+</footer>
+
+<script>
+  // Opent het juiste onderwerp als je via een link op de homepage komt (bijv. #wifi).
+  function openFromHash() {
+    const item = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (!item || item.tagName !== 'DETAILS') return;
+    item.open = true;
+    item.scrollIntoView({ block: 'start' });
+  }
+  openFromHash();
+  window.addEventListener('hashchange', openFromHash);
+
+  // Zoekbalk: filtert de onderwerpen live op titel, stappen en trefwoorden.
+  const searchInput = document.getElementById('faqSearch');
+  const searchEmpty = document.getElementById('searchEmpty');
+  const faqItems = [...document.querySelectorAll('.faq-item')];
+
+  function normalize(text) {
+    return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  const haystacks = faqItems.map((item) => normalize(`${item.textContent} ${item.dataset.keywords || ''}`));
+
+  searchInput.addEventListener('input', () => {
+    const words = normalize(searchInput.value).split(/\s+/).filter(Boolean);
+    const matches = faqItems.filter((item, i) => {
+      const hit = words.every((w) => haystacks[i].includes(w));
+      item.hidden = !hit;
+      return hit;
+    });
+    faqItems.forEach((item) => { if (words.length === 0) item.open = false; });
+    if (words.length && matches.length === 1) matches[0].open = true;
+    searchEmpty.hidden = matches.length > 0;
+  });
+
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  }
+</script>
+
+</body>
+</html>
