@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICT Helpdesk — Dendron College</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <img src="logo%20kleur.svg" alt="Dendron college" class="logo-img">
+  </div>
+</header>
+
+<main class="main-content">
+
+  <section class="status-section">
+    <div class="wrap">
+      <div class="status-grid" aria-live="polite">
+        <article class="card card--now" id="nowCard">
+          <p class="card-label">Nu open</p>
+          <div class="card-body" id="nowCardBody">
+            <p class="loading">Bezig met laden…</p>
+          </div>
+        </article>
+
+        <article class="card card--next" id="nextCard">
+          <p class="card-label">Volgende keer</p>
+          <div class="card-body" id="nextCardBody">
+            <p class="loading">Bezig met laden…</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <p class="clock" id="clockLine"></p>
+
+    <div class="cta-row">
+      <button type="button" class="btn btn-primary" id="openScheduleBtn">Bekijk het hele rooster</button>
+    </div>
+
+    <section class="note-block">
+      <span class="note-triangle" aria-hidden="true"></span>
+      <p>Voor 08:15 uur zit er nog niemand, en ook pas als een lesuur echt begonnen is, zit er iemand klaar. In de pauzes zitten er soms ook mensen, dus kom gerust even kijken :)</p>
+    </section>
+  </div>
+
+</main>
+
+<footer class="site-footer no-print">
+  <div class="wrap footer-inner">
+    <img src="logo%20kleur.svg" alt="Dendron college ICT Helpdesk" class="logo-img logo-img--sm">
+    <p>Gebr. van Doornelaan 124, 5961 BE Horst</p>
+    <a class="footer-link" href="https://www.dendrondashboard.online/">← Terug naar het dashboard</a>
+  </div>
+</footer>
+
+<div class="modal-backdrop" id="modalBackdrop"></div>
+<div class="modal" id="scheduleModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+  <div class="modal-inner">
+    <div class="modal-header">
+      <img src="logo%20kleur.svg" alt="Dendron college" class="logo-img logo-img--sm">
+      <button type="button" class="btn btn-ghost no-print" id="closeModalBtn" aria-label="Sluiten">Sluiten ✕</button>
+    </div>
+
+    <h2 id="modalTitle">Rooster ICT Helpdesk</h2>
+    <p class="modal-sub">Schooljaar 2026-2027 &middot; maandag t/m vrijdag</p>
+    <p class="print-meta" id="printMeta"></p>
+
+    <div class="table-scroll">
+      <table class="schedule-table" id="scheduleTable">
+        <thead>
+          <tr>
+            <th scope="col">Uur</th>
+            <th scope="col">Maandag</th>
+            <th scope="col">Dinsdag</th>
+            <th scope="col">Woensdag</th>
+            <th scope="col">Donderdag</th>
+            <th scope="col">Vrijdag</th>
+          </tr>
+        </thead>
+        <tbody id="scheduleTableBody"></tbody>
+      </table>
+    </div>
+
+    <p class="modal-footnote">Voor 08:15 uur zit er nog niemand, en ook pas als een lesuur echt begonnen is, zit er iemand klaar. In de pauzes zitten er soms ook mensen, dus kom gerust even kijken :)</p>
+
+    <div class="modal-actions no-print">
+      <button type="button" class="btn btn-primary" id="printScheduleBtn">Rooster printen</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
