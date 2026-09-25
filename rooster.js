@@ -17,6 +17,8 @@
 //    tussen twee lesuren (bijv. 10:45 – 11:05).
 //
 //  Let op: namen tussen 'aanhalingstekens', en vergeet de komma's niet.
+//
+//  Dit bestand kan ook automatisch bijgewerkt worden door de beheeromgeving (beheer.html).
 // =====================================================================
 
 const SCHOOL_YEAR = '2026-2027';
@@ -51,6 +53,7 @@ const SCHEDULE = {
     2: ['Bruce', 'Bert'],
     3: ['Sjoerd'],
     4: ['Sjoerd'],
+    5: ['Robin'],
   },
   woensdag: {
     5: ['Ruben'],
@@ -72,13 +75,12 @@ const SCHEDULE = {
 };
 
 // Kleuren uit de huisstijl, zo dicht mogelijk bij ieders eigen kleur.
-// Rood staat niet in de huisstijl; daarvoor is een bijpassende rode tint gekozen.
 const NAME_COLOR = {
-  Bruce: 'teal',       // groen
-  Ruben: 'red',        // rood
-  Bert: 'lightblue',   // lichtblauw
-  Robin: 'magenta',    // roze
-  Teun: 'orange',      // oranje
-  Jarne: 'yellow',     // geel
+  Bruce: 'teal',
+  Ruben: 'red',
+  Bert: 'lightblue',
+  Robin: 'magenta',
+  Teun: 'orange',
+  Jarne: 'yellow',
   Sjoerd: 'blue',
 };
