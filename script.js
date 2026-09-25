@@ -19,6 +19,36 @@ function namesFor(dayKey, period) {
   return (SCHEDULE[dayKey] && SCHEDULE[dayKey][period]) || [];
 }
 
+// Lokale datum als 'YYYY-MM-DD' (geen toISOString: die rekent in UTC en kan rond
+// middernacht een dag verspringen).
+function dateKey(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+// Onbeschikbaarheden { naam, datum, periode } die de teamleider heeft ingevoerd via de beheeromgeving.
+let absences = [];
+
+async function loadAbsences() {
+  try {
+    const res = await fetch('afwezig.json', { cache: 'no-store' });
+    if (!res.ok) return;
+    const list = await res.json();
+    absences = Array.isArray(list) ? list : [];
+  } catch (err) {
+    // Geen internet of het bestand ontbreekt: dan gaan we ervan uit dat er geen meldingen zijn.
+  }
+}
+
+// Haalt iemand die voor die datum/lesuur als onbeschikbaar staat uit een namenlijst.
+function absenceFilter(names, date, period) {
+  if (!absences.length) return names;
+  const key = dateKey(date);
+  return names.filter((n) => !absences.some((a) => a.naam === n && a.datum === key && a.periode === period));
+}
+
 function atTime(baseDate, hhmm) {
   const [h, m] = hhmm.split(':').map(Number);
   const d = new Date(baseDate);
@@ -65,7 +95,7 @@ function buildOccurrences(fromDate, daysAhead) {
         period: hour.period,
         start: atTime(day, hour.start),
         end: atTime(day, hour.end),
-        names: namesFor(dayKey, hour.period),
+        names: absenceFilter(namesFor(dayKey, hour.period), day, hour.period),
       });
     });
   }
@@ -245,10 +275,11 @@ function renderDayList(now) {
   const list = document.getElementById('dayList');
   const todayKey = DAY_LABELS[now.getDay()];
   const isToday = selectedDay === todayKey;
+  const selectedDate = dateForDayInWeek(now, selectedDay);
   const rows = [];
 
   HOURS.forEach((hour, idx) => {
-    const names = namesFor(selectedDay, hour.period);
+    const names = absenceFilter(namesFor(selectedDay, hour.period), selectedDate, hour.period);
     const isNow = isToday && now >= atTime(now, hour.start) && now < atTime(now, hour.end);
     const isPast = isToday && now >= atTime(now, hour.end);
     const classes = ['slot', names.length ? 'slot--open' : 'slot--closed', isNow && 'is-now', isPast && 'is-past']
@@ -302,8 +333,8 @@ function renderWeekTable(now) {
   const rows = [];
   HOURS.forEach((hour, idx) => {
     const cells = SCHOOL_DAYS.map((dayKey) => {
-      const names = namesFor(dayKey, hour.period);
       const isToday = dayKey === todayKey;
+      const names = absenceFilter(namesFor(dayKey, hour.period), dateForDayInWeek(now, dayKey), hour.period);
       const isNow = isToday && now >= atTime(now, hour.start) && now < atTime(now, hour.end);
       const classes = [names.length ? 'is-open' : '', isToday ? 'is-today' : '', isNow ? 'is-now' : '']
         .filter(Boolean).join(' ');
@@ -349,6 +380,13 @@ function mondayOfWeek(date) {
   return d;
 }
 
+// De datum van `dayKey` (bijv. 'woensdag') in dezelfde week als `referenceDate`.
+function dateForDayInWeek(referenceDate, dayKey) {
+  const d = mondayOfWeek(referenceDate);
+  d.setDate(d.getDate() + SCHOOL_DAYS.indexOf(dayKey));
+  return d;
+}
+
 // Alle lesuren van deze week (t/m nu) waar wél iemand op het rooster staat.
 // Toekomstige lesuren kun je niet melden, want dan weet je nog niet of er iemand zit.
 function buildWeekSlots(now) {
@@ -358,7 +396,7 @@ function buildWeekSlots(now) {
     const dayDate = new Date(monday);
     dayDate.setDate(dayDate.getDate() + dayIndex);
     HOURS.forEach((hour) => {
-      const names = namesFor(dayKey, hour.period);
+      const names = absenceFilter(namesFor(dayKey, hour.period), dayDate, hour.period);
       if (!names.length) return;
       const start = atTime(dayDate, hour.start);
       if (start > now) return;
@@ -481,5 +519,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 
 initReportForm();
 
+loadAbsences().then(update);
 update();
 setInterval(update, 30000);
+setInterval(loadAbsences, 5 * 60000);

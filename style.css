@@ -1217,6 +1217,156 @@ kbd {
 
 .selfhelp-banner--end { margin-top: 32px; }
 
+/* ---------- Beheeromgeving ---------- */
+
+.admin-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.admin-card-title {
+  font-size: 1.3rem;
+  margin: 0 0 8px;
+}
+
+.admin-help {
+  margin: 16px 0;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  background: var(--gray-bg);
+}
+
+.admin-help summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.admin-help ol {
+  margin: 12px 0 0;
+  padding-left: 20px;
+}
+
+.admin-help li {
+  line-height: 1.55;
+  padding: 3px 0;
+}
+
+.admin-help code {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 0.9em;
+}
+
+.admin-login-form,
+.admin-inline-form {
+  max-width: 420px;
+  margin-top: 16px;
+}
+
+.admin-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.admin-connected {
+  margin: 0;
+  font-weight: 700;
+  color: var(--teal);
+}
+
+.admin-helper-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.admin-helper-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-helper-row select {
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 6px 8px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--line);
+  background: var(--white);
+}
+
+.admin-remove-btn {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.82rem;
+  border: none;
+  background: transparent;
+  color: var(--red);
+  cursor: pointer;
+  padding: 4px 6px;
+}
+
+.admin-remove-btn:hover { text-decoration: underline; }
+
+.admin-schedule-wrap { margin-top: 16px; }
+
+.admin-slot-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 120px;
+}
+
+.admin-slot-badge {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.admin-slot-add {
+  font-family: inherit;
+  font-size: 0.78rem;
+  padding: 3px 6px;
+  border-radius: var(--radius);
+  border: 1.5px dashed var(--line);
+  background: var(--white);
+  color: var(--muted);
+}
+
+.admin-absence-label {
+  margin: 0 0 8px;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.admin-save-bar {
+  position: sticky;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: var(--radius);
+  background: var(--dark);
+  box-shadow: var(--shadow);
+}
+
+.admin-save-bar .report-status { color: var(--white); margin: 0; }
+.admin-save-bar .report-status[data-tone="ok"] { color: var(--lightblue); }
+.admin-save-bar .report-status[data-tone="error"] { color: var(--yellow); }
+
 /* ---------- Footer ---------- */
 
 .site-footer {
@@ -1249,6 +1399,25 @@ kbd {
 }
 
 .footer-link:hover { text-decoration: underline; }
+
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.footer-link--muted {
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.footer-link--muted:hover { color: var(--yellow); }
+
+@media (max-width: 480px) {
+  .footer-links { align-items: flex-start; }
+}
 
 /* ---------- Print: alleen het weekrooster, op één A4 ---------- */
 

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beheer — ICT Helpdesk Dendron College</title>
+<meta name="description" content="Voor de teamleider: rooster aanpassen, helpdeskers beheren en beschikbaarheid bijhouden.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#ffcc00">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 233 259'%3E%3Cpath d='M233 259H0L116.5 0z' fill='%23ffcc00'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,300;6..12,400;6..12,600;6..12,700;6..12,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="back-link" href="index.html">
+      <span aria-hidden="true">←</span> Openingstijden
+    </a>
+    <img src="logo%20kleur.svg" alt="Dendron college" class="logo-img">
+  </div>
+</header>
+
+<main>
+
+  <section class="hero hero--compact">
+    <svg class="hero-pattern" viewBox="0 0 466 518" aria-hidden="true" preserveAspectRatio="xMaxYMax meet">
+      <path d="M466 518H233L349.5 259Z" fill="#fff"/>
+      <path d="M349.5 259H233L291.25 129.5Z" fill="#fff" opacity=".55"/>
+      <path d="M466 259H349.5L407.75 129.5Z" fill="#fff" opacity=".35"/>
+      <path d="M233 518H116.5L174.75 388.5Z" fill="#fff" opacity=".7"/>
+    </svg>
+
+    <div class="wrap hero-inner">
+      <p class="eyebrow">Alleen voor de teamleider</p>
+      <h1>Beheer</h1>
+      <p class="hero-intro">Rooster aanpassen, helpdeskers toevoegen/verwijderen en beschikbaarheid bijhouden. Wijzigingen gaan direct live.</p>
+    </div>
+  </section>
+
+  <!-- Stap 1: inloggen -->
+  <section class="section" id="loginSection">
+    <div class="wrap">
+      <div class="admin-card">
+        <h2 class="admin-card-title">Verbinden met GitHub</h2>
+        <p>Deze pagina schrijft wijzigingen rechtstreeks naar de repository op GitHub. Daarvoor heb je een eigen <strong>GitHub-token</strong> nodig — dat is de echte beveiliging: alleen wie schrijftoegang tot de repo heeft, kan hier iets opslaan.</p>
+
+        <details class="admin-help">
+          <summary>Hoe maak ik een token aan? (eenmalig)</summary>
+          <ol>
+            <li>Ga naar <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a> en log in met een GitHub-account dat schrijftoegang heeft tot deze repository.</li>
+            <li>Geef het token een naam, bijv. "Helpdesk beheer".</li>
+            <li>Kies bij <strong>Repository access</strong> voor "Only select repositories" en selecteer deze repo (<strong>Helpdesk-uren</strong>).</li>
+            <li>Zet bij <strong>Permissions → Repository permissions → Contents</strong> op <strong>Read and write</strong>. Meer heeft deze pagina niet nodig.</li>
+            <li>Klik op "Generate token" en kopieer de token (begint met <code>github_pat_…</code>).</li>
+            <li>Plak hem hieronder. Hij wordt alleen in dit browsertabblad onthouden (niet opgeslagen), en gaat rechtstreeks naar GitHub — nooit ergens anders naartoe.</li>
+          </ol>
+        </details>
+
+        <form class="report-form admin-login-form" id="loginForm">
+          <div class="report-field">
+            <label for="tokenInput">GitHub-token</label>
+            <input type="password" id="tokenInput" autocomplete="off" placeholder="github_pat_…" required>
+          </div>
+          <div class="report-actions">
+            <button type="submit" class="btn btn-dark">Verbinden</button>
+          </div>
+          <p class="report-status" id="loginStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stap 2: beheeromgeving (verborgen tot je verbonden bent) -->
+  <section class="section" id="adminSection" hidden>
+    <div class="wrap">
+
+      <div class="admin-topbar">
+        <p class="admin-connected">Verbonden met GitHub</p>
+        <button type="button" class="btn" id="logoutBtn">Uitloggen</button>
+      </div>
+
+      <!-- Rooster bewerken -->
+      <div class="admin-card">
+        <h2 class="admin-card-title">Rooster</h2>
+        <p>Klik op een naam in een vak om diegene dat lesuur te verwijderen. Gebruik het keuzemenu om iemand toe te voegen.</p>
+        <div class="week-view admin-schedule-wrap">
+          <table class="schedule-table" id="adminScheduleTable">
+            <thead><tr id="adminScheduleHead"></tr></thead>
+            <tbody id="adminScheduleBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="admin-save-bar">
+        <button type="button" class="btn btn-dark" id="saveRoosterBtn">Rooster &amp; helpdeskers opslaan</button>
+        <p class="report-status" id="saveStatus" role="status" aria-live="polite"></p>
+      </div>
+
+      <!-- Helpdeskers beheren -->
+      <div class="admin-card">
+        <h2 class="admin-card-title">Helpdeskers</h2>
+        <p>Voeg een nieuwe helpdesker toe of verwijder iemand. Verwijderen haalt diegene ook overal uit het rooster.</p>
+        <div id="helperList" class="admin-helper-list"></div>
+        <form class="report-form admin-inline-form" id="helperForm">
+          <div class="report-field">
+            <label for="helperName">Naam</label>
+            <input type="text" id="helperName" placeholder="Bijv. Sanne" required>
+          </div>
+          <div class="report-field">
+            <label for="helperColor">Kleur</label>
+            <select id="helperColor">
+              <option value="teal">teal</option>
+              <option value="red">rood</option>
+              <option value="lightblue">lichtblauw</option>
+              <option value="magenta">magenta</option>
+              <option value="orange">oranje</option>
+              <option value="yellow">geel</option>
+              <option value="blue">blauw</option>
+              <option value="lime">lime</option>
+              <option value="dark">donker</option>
+            </select>
+          </div>
+          <div class="report-actions">
+            <button type="submit" class="btn btn-dark">Toevoegen</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Beschikbaarheid -->
+      <div class="admin-card" id="absenceCard">
+        <h2 class="admin-card-title">Niet beschikbaar</h2>
+        <p>Geef aan dat iemand op een bepaalde datum een bepaald lesuur niet beschikbaar is. Diegene verdwijnt dan automatisch dat lesuur van het rooster op de site — je hoeft het weekrooster hiervoor niet aan te passen.</p>
+        <form class="report-form admin-inline-form" id="absenceForm">
+          <div class="report-field">
+            <label for="absenceName">Wie</label>
+            <select id="absenceName" required></select>
+          </div>
+          <div class="report-field">
+            <label for="absenceDate">Datum</label>
+            <input type="date" id="absenceDate" required>
+          </div>
+          <div class="report-field">
+            <label for="absencePeriod">Lesuur</label>
+            <select id="absencePeriod" required></select>
+          </div>
+          <div class="report-actions">
+            <button type="submit" class="btn btn-dark">Toevoegen</button>
+          </div>
+          <p class="report-status" id="absenceStatus" role="status" aria-live="polite"></p>
+        </form>
+        <div id="absenceList"></div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div>
+      <p class="footer-title">Dendron College</p>
+      <p>Gebr. van Doornelaan 124, 5961 BE Horst</p>
+    </div>
+    <a class="footer-link" href="https://www.dendrondashboard.online/">← Terug naar het dashboard</a>
+  </div>
+</footer>
+
+<script src="admin.js"></script>
+</body>
+</html>
