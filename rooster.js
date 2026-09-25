@@ -53,7 +53,6 @@ const SCHEDULE = {
     2: ['Bruce', 'Bert'],
     3: ['Sjoerd'],
     4: ['Sjoerd'],
-    5: ['Robin'],
   },
   woensdag: {
     5: ['Ruben'],
