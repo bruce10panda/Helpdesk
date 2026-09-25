@@ -598,7 +598,6 @@ p { line-height: 1.55; }
 }
 
 .print-meta,
-.print-location,
 .print-only { display: none; }
 
 /* ---------- Knoppen ---------- */
@@ -1465,12 +1464,6 @@ kbd {
   .section h2 { font-size: 22px; }
   .section h2::before { width: 16px; height: 18px; }
   .section-sub { margin-top: 2px; font-size: 11px; }
-
-  .print-location {
-    display: block;
-    font-size: 11px;
-    margin: 2px 0 0;
-  }
 
   .print-meta {
     display: block;
